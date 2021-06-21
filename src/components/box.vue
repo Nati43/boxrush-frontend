@@ -1,11 +1,12 @@
 <template>
     <div class="d-inline-block" style="width: 100%; max-width: 500px;" v-if="cols && rows">
 
-        <div class="mb-2 d-flex justify-content-between align-items-end">
+        <div class="mb-4 d-flex justify-content-between align-items-end">
             <p class="font-weight-bold text-muted d-flex flex-column align-items-start">
                 <span class="badge badge-info p-2" v-if="turn"> Your move .. </span>
                 <span v-else-if="!turn && winner"> Winner: <span class="badge badge-info p-2">{{winner}}</span> </span>
-                <span v-if="!turn && winner && winner==name" class="text-success font-weight-bold mt-2"> Congratulations! You have won. </span>
+                <span v-if="!turn && winner && winner==name" class="text-left text-success font-weight-bold mt-2"> WooHoo! <br> You won. </span>
+                <span v-if="!turn && winner && winner!=name" class="text-left text-danger font-weight-bold mt-2"> Booo! <br> You lost. </span>
             </p>
             <div class="d-flex flex-column justify-content-start align-items-end">
                 <p class="font-weight-bold text-muted btn m-0 p-0 d-inline-block text-left" v-for="(val, idx) in scores" :key="idx">
@@ -134,7 +135,7 @@ export default {
             });
         },
         markX(col, row) {
-            if(this.turn && this.$refs[col+'-'+row][0].hasAttribute('active')) {
+            if(this.turn && !this.$refs[col+'-'+row][0].hasAttribute('active')) {
                 this.socket.emit('markX', {
 					'col': col,
 					'row': row,
@@ -144,7 +145,7 @@ export default {
             }
         },
         markY(col, row) {
-            if(this.turn && this.$refs[col+'-'+row][0].hasAttribute('active')) {
+            if(this.turn && !this.$refs[col+'-'+row][0].hasAttribute('active')) {
                 this.socket.emit('markY', {
                     'col': col,
                     'row': row,

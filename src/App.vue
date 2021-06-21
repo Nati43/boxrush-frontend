@@ -1,7 +1,7 @@
 <template>
 	<div id="app" class="d-flex flex-column align-items-center">
 		
-		<Box v-if="joined==2" :cols="cols" :rows="rows" :socket="socket" :player="player" :roomID="roomID" :name="name" />
+		<Box class="px-5" v-if="joined==2" :cols="cols" :rows="rows" :socket="socket" :player="player" :roomID="roomID" :name="name" />
 
 		<div v-else-if="player==1" class="d-inline-flex flex-column align-items-center m-5">
 			<!-- Start new game if no room created -->
@@ -28,7 +28,7 @@
 				<p class="font-weight-bold text-muted">Waiting for player 2</p>
 				<b-spinner label="Waiting..." variant="info" type="grow"></b-spinner>
 				<p class="pt-3 font-weight-bold text-muted">Invite a friend to join using the link below.</p>
-				<p class="link text-info">{{origin}}?game={{roomID}}</p>
+				<p class="link text-info">{{host}}?game={{roomID}}</p>
 			</div>
 		</div>
 
@@ -63,6 +63,7 @@ export default {
 	},
 	data: ()=>{
 		return {
+			host: '192.168.1.11:3000',
 			name: null,
 			nameError: null,
 			cols: 5,
@@ -91,7 +92,7 @@ export default {
 		start() {
 			if(this.name) {
 				this.nameError=false;
-				this.socket = io('ws://localhost:3000/games');
+				this.socket = io.connect(this.host+'/games');
 	
 				this.socket.on('connect', ()=>{
 					console.log('Connected to server.');
@@ -118,7 +119,7 @@ export default {
 		join(){
 			if(this.name) {
 				this.nameError=false;
-				this.socket = io('ws://localhost:3000/games');
+				this.socket = io(this.host+'/games');
 	
 				this.socket.on('connect', ()=>{
 					console.log('Connected to server.');
