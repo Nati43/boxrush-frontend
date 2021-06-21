@@ -1,17 +1,29 @@
 <template>
     <div class="d-inline-block" style="width: 100%; max-width: 500px;" v-if="cols && rows">
+        <div class="logo d-flex align-items-center px-3">
+            <div class="boxes">
+                <p class="title text-left small m-0 p-0 text-info font-weight-bold h1">▢▣</p>
+                <p class="title text-left small m-0 p-0 text-info font-weight-bold h1">▣▢</p>
+            </div>
+            <span class="text-info h4 font-weight-cold title ml-3 my-auto">Boxes</span>
+        </div>
 
-        <div class="mb-4 d-flex justify-content-between align-items-end">
-            <p class="font-weight-bold text-muted d-flex flex-column align-items-start">
-                <span class="badge badge-info p-2" v-if="turn"> Your move .. </span>
-                <span v-else-if="!turn && winner"> Winner: <span class="badge badge-info p-2">{{winner}}</span> </span>
+        <div class="mb-4 d-flex flex-column justify-content-between align-items-end">
+            <p class="font-weight-bold text-light d-flex flex-column align-items-start">
+                <span class="badge text-success p-2" :class="{'text-success': turn, 'text-danger': !turn}" v-if="!winner" v-text="turn ? 'Your move ..': 'Opponents move ..'"> </span>
+                <span v-if="!turn && winner"> Winner: <span class="badge badge-info p-2">{{winner}}</span> </span>
                 <span v-if="!turn && winner && winner==name" class="text-left text-success font-weight-bold mt-2"> WooHoo! <br> You won. </span>
                 <span v-if="!turn && winner && winner!=name" class="text-left text-danger font-weight-bold mt-2"> Booo! <br> You lost. </span>
             </p>
-            <div class="d-flex flex-column justify-content-start align-items-end">
-                <p class="font-weight-bold text-muted btn m-0 p-0 d-inline-block text-left" v-for="(val, idx) in scores" :key="idx">
-                    <span style="width: 100px;" class="badge badge-secondary rounded-0 px-3 py-2">{{idx}}</span>
-                    <span class="badge badge-info  px-3 py-2"> <span class="h5 font-weight-bold">{{val}}</span> </span>
+            <div class="d-flex flex-row justify-content-between align-items-end w-100">
+                <p class="font-weight-bold text-light btn m-0 p-0 d-inline-block text-left">
+                    <span  class="badge border rounded-0 px-3 py-2">{{Object.keys(scores)[0]}}</span>
+                    <span  class="badge badge-info  px-3 py-2"> <span class="h5 font-weight-bold">{{scores[Object.keys(scores)[0]]}}</span> </span>
+                </p>
+                <span class="title h2 text-light">vs</span>
+                <p class="font-weight-bold text-light btn m-0 p-0 d-inline-block text-left">
+                    <span  class="badge badge-info  px-3 py-2"> <span class="h5 font-weight-bold">{{scores[Object.keys(scores)[1]]}}</span> </span>
+                    <span  class="badge border rounded-0 px-3 py-2">{{Object.keys(scores)[1]}}</span>
                 </p>
             </div>
         </div>
@@ -28,7 +40,7 @@
                     @click="markX(col, row)"
                     :id="col+'-'+row"
                     :ref="col+'-'+row"
-                    class="mark border border-light bg-light flex-grow-1"
+                    class="mark bg-darkish flex-grow-1"
                     :class="{'line': turn}"
                     style="width: 10px;">
                 </div>
@@ -37,7 +49,7 @@
                     @click="markY(col, row)"
                     :id="col+'-'+row"
                     :ref="col+'-'+row"
-                    class="mark border border-light bg-light"
+                    class="mark bg-darkish"
                     :class="{'line': turn}"
                     style="height: 50px; width: 10px">
                 </div>
@@ -51,21 +63,31 @@
                 </div>
             </div>
         </div>
+
+        <div v-if="winner" class="my-5">
+            <b-button variant="outline-info" :to="origin"> New Game </b-button>
+        </div>
     </div>
 </template>
 
 <script>
 export default {
     name: 'Box',
-    props: ["cols", "rows", "player", "socket", "roomID", "name"],
+    props: ["cols", "rows", "player", "socket", "roomID", "name", "room"],
     data: ()=> {
         return {
             turn: false,
             scores: {},
             winner: null,
+			origin: location.origin,
         }
     },
     mounted() {
+        this.room.players.forEach(player => {
+            this.scores[player] = 0;
+        });
+        this.$forceUpdate();
+        
         if(this.player==1)
             this.turn = true;
 
@@ -163,13 +185,25 @@ export default {
     cursor: pointer;
     transition: all .35s;
 }
+.bg-darkish {
+    background-color: #3333 !important;
+}
 .line:hover {
-    background-color: #0005 !important;
+    background-color: #f8f9fa !important;
 }
 .mark[active] {
-    background-color: #0005 !important;
+    background-color: #f8f9fa !important;
 }
 .box[state="4"] {
     color: #17a2b8;
+}
+.logo {
+    text-align: left;
+    position: absolute;
+    top: 25px;
+    left: 25px;
+}
+.boxes {
+    transform: scaleX(1.5);
 }
 </style>
