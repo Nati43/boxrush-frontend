@@ -5,15 +5,16 @@
                 <p class="title text-left small m-0 p-0 text-info font-weight-bold h1">▢▣</p>
                 <p class="title text-left small m-0 p-0 text-info font-weight-bold h1">▣▢</p>
             </div>
-            <span class="text-info h4 font-weight-cold title ml-3 my-auto">Boxes</span>
+            <span class="text-info h4 font-weight-cold title ml-3 my-auto">BoxRush</span>
         </div>
 
         <div class="mb-4 d-flex flex-column justify-content-between align-items-end">
             <p class="font-weight-bold text-light d-flex flex-column align-items-start">
                 <span class="badge text-success p-2" :class="{'text-success': turn, 'text-danger': !turn}" v-if="!winner" v-text="turn ? 'Your move ..': 'Opponents move ..'"> </span>
-                <span v-if="!turn && winner"> Winner: <span class="badge badge-info p-2">{{winner}}</span> </span>
-                <span v-if="!turn && winner && winner==name" class="text-left text-success font-weight-bold mt-2"> WooHoo! <br> You won. </span>
-                <span v-if="!turn && winner && winner!=name" class="text-left text-danger font-weight-bold mt-2"> Booo! <br> You lost. </span>
+                <span v-if="!turn && winner != '_DRAW_'"> Winner: <span class="badge badge-info p-2">{{winner}}</span> </span>
+                <span v-if="!turn && winner == '_DRAW_'"> <span class="badge badge-info p-2"> 🤜 Draw 🤛 </span> </span>
+                <span v-else-if="!turn && winner && winner==name" class="text-left text-success font-weight-bold mt-2"> 🎉🥳🎉 You won. </span>
+                <span v-else-if="!turn && winner && winner!=name" class="text-left text-danger font-weight-bold mt-2"> 😔😟😔 You lost. </span>
             </p>
             <div class="d-flex flex-row flex-wrap justify-content-start align-items-end w-100">
                 <p class="mx-auto font-weight-bold text-light btn m-0 p-0 d-inline-block text-left" v-for="(score, idx) in scores" :key="idx">
@@ -164,7 +165,9 @@ export default {
                 var winner = players[0];
                 for (let i = 1; i < players.length; i++) {
                     if(this.scores[players[i]] > this.scores[this.winner])                    
-                    winner = players[i];
+                        winner = players[i];
+                    else if(this.scores[players[i]] > this.scores[this.winner])
+                        winner = "_DRAW_"
                 }
                 this.win(winner);
             }
