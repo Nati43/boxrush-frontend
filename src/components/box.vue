@@ -15,15 +15,10 @@
                 <span v-if="!turn && winner && winner==name" class="text-left text-success font-weight-bold mt-2"> WooHoo! <br> You won. </span>
                 <span v-if="!turn && winner && winner!=name" class="text-left text-danger font-weight-bold mt-2"> Booo! <br> You lost. </span>
             </p>
-            <div class="d-flex flex-row justify-content-between align-items-end w-100">
-                <p class="font-weight-bold text-light btn m-0 p-0 d-inline-block text-left">
-                    <span  class="badge border rounded-0 px-3 py-2">{{Object.keys(scores)[0]}}</span>
-                    <span  class="badge badge-info  px-3 py-2"> <span class="h5 font-weight-bold">{{scores[Object.keys(scores)[0]]}}</span> </span>
-                </p>
-                <span class="title h2 text-light">vs</span>
-                <p class="font-weight-bold text-light btn m-0 p-0 d-inline-block text-left">
-                    <span  class="badge badge-info  px-3 py-2"> <span class="h5 font-weight-bold">{{scores[Object.keys(scores)[1]]}}</span> </span>
-                    <span  class="badge border rounded-0 px-3 py-2">{{Object.keys(scores)[1]}}</span>
+            <div class="d-flex flex-row flex-wrap justify-content-start align-items-end w-100">
+                <p class="mx-auto font-weight-bold text-light btn m-0 p-0 d-inline-block text-left" v-for="(score, idx) in scores" :key="idx">
+                    <span  class="badge border border-info border-left-0 border-right-0 rounded-0 px-3 py-2">{{idx}}</span>
+                    <span  class="badge badge-info  px-3 py-2"> <span class="h5 font-weight-bold">{{score}}</span> </span>
                 </p>
             </div>
         </div>
@@ -73,7 +68,7 @@
 <script>
 export default {
     name: 'Box',
-    props: ["cols", "rows", "player", "socket", "roomID", "name", "room"],
+    props: ["id", "cols", "rows", "player", "socket", "roomID", "name", "room"],
     data: ()=> {
         return {
             turn: false,
@@ -84,7 +79,7 @@ export default {
     },
     mounted() {
         this.room.players.forEach(player => {
-            this.scores[player] = 0;
+            this.scores[player.name] = 0;
         });
         this.$forceUpdate();
         
@@ -92,45 +87,55 @@ export default {
             this.turn = true;
 
         this.socket.on('markedX', (marked)=>{
-            if(marked.row > 1) { // add point to box-above(row-1) => IF row > 1
-                let box = this.$refs[marked.col+'-'+(marked.row-1)][0];
-                box.setAttribute('state', parseInt(box.getAttribute('state'))+1);
-                if(parseInt(box.getAttribute('state'))==4) {
-                    box.innerText = marked.name.charAt(0);
-                    this.addScore(marked.name);
+            if(!this.$refs[marked.col+'-'+marked.row][0].hasAttribute('active')) {
+                if(marked.row > 1) { // add point to box-above(row-1) => IF row > 1
+                    let box = this.$refs[marked.col+'-'+(marked.row-1)][0];
+                    box.setAttribute('state', parseInt(box.getAttribute('state'))+1);
+                    if(parseInt(box.getAttribute('state'))==4) {
+                        box.innerText = marked.name.charAt(0);
+                        this.addScore(marked.name);
+                    }
                 }
-            }
-            if(marked.row < 2*this.rows+1) { // add point to box-below(row+1) => IF row < 2*rows+1
-                let box = this.$refs[marked.col+'-'+(marked.row+1)][0];
-                box.setAttribute('state', parseInt(box.getAttribute('state'))+1);
-                if(parseInt(box.getAttribute('state'))==4) {
-                    box.innerText = marked.name.charAt(0);
-                    this.addScore(marked.name);
+                if(marked.row < 2*this.rows+1) { // add point to box-below(row+1) => IF row < 2*rows+1
+                    let box = this.$refs[marked.col+'-'+(marked.row+1)][0];
+                    box.setAttribute('state', parseInt(box.getAttribute('state'))+1);
+                    if(parseInt(box.getAttribute('state'))==4) {
+                        box.innerText = marked.name.charAt(0);
+                        this.addScore(marked.name);
+                    }
                 }
+                this.$refs[marked.col+'-'+marked.row][0].setAttribute('active', true);
             }
-            this.$refs[marked.col+'-'+marked.row][0].setAttribute('active', true);
-            this.turn = !this.turn;
+            // this.turn = !this.turn;
         });
 
         this.socket.on('markedY', (marked)=>{
-            if(marked.col > 1) { // add point to left-box(col-1) => IF col > 1
-                let box = this.$refs[(marked.col-1)+'-'+marked.row][0];
-                box.setAttribute('state', parseInt(box.getAttribute('state'))+1);
-                if(parseInt(box.getAttribute('state'))==4) {
-                    box.innerText = marked.name.charAt(0);
-                    this.addScore(marked.name);
+            if(!this.$refs[marked.col+'-'+marked.row][0].hasAttribute('active')) {
+                if(marked.col > 1) { // add point to left-box(col-1) => IF col > 1
+                    let box = this.$refs[(marked.col-1)+'-'+marked.row][0];
+                    box.setAttribute('state', parseInt(box.getAttribute('state'))+1);
+                    if(parseInt(box.getAttribute('state'))==4) {
+                        box.innerText = marked.name.charAt(0);
+                        this.addScore(marked.name);
+                    }
                 }
-            }
-            if(marked.col < 2*this.cols+1) { // add point to right-box(col+1) => IF col < 2*cols+1
-                let box = this.$refs[(marked.col+1)+'-'+marked.row][0];
-                box.setAttribute('state', parseInt(box.getAttribute('state'))+1);
-                if(parseInt(box.getAttribute('state'))==4) {
-                    box.innerText = marked.name.charAt(0);
-                    this.addScore(marked.name);
+                if(marked.col < 2*this.cols+1) { // add point to right-box(col+1) => IF col < 2*cols+1
+                    let box = this.$refs[(marked.col+1)+'-'+marked.row][0];
+                    box.setAttribute('state', parseInt(box.getAttribute('state'))+1);
+                    if(parseInt(box.getAttribute('state'))==4) {
+                        box.innerText = marked.name.charAt(0);
+                        this.addScore(marked.name);
+                    }
                 }
+                this.$refs[marked.col+'-'+marked.row][0].setAttribute('active', true);
             }
-            this.$refs[marked.col+'-'+marked.row][0].setAttribute('active', true);
-            this.turn = !this.turn;
+            // this.turn = !this.turn;
+        });
+
+        this.socket.on('turn', (turn) => {
+            if(this.id == turn) {
+                this.turn = true;
+            }
         });
 
         this.socket.on('winner', (data) => {
@@ -146,9 +151,23 @@ export default {
                 this.scores[name] = 1;
             else
                 this.scores[name] += 1;
-            
-            if(this.scores[name] > this.cols*this.rows/2)
-                this.win(name)
+            this.$forceUpdate();
+
+            var players = Object.keys(this.scores);
+            var total = 0;
+            players.forEach((player) => {
+                total += this.scores[player];
+            });
+
+            if(total == this.rows*this.cols) {
+                // Game ended
+                var winner = players[0];
+                for (let i = 1; i < players.length; i++) {
+                    if(this.scores[players[i]] > this.scores[this.winner])                    
+                    winner = players[i];
+                }
+                this.win(winner);
+            }
         },
         win(name) {
             this.socket.emit('win', {
@@ -158,22 +177,78 @@ export default {
         },
         markX(col, row) {
             if(this.turn && !this.$refs[col+'-'+row][0].hasAttribute('active')) {
+                this.turn = false;
+                // Mark and add points
+                var scored = false;
+                if(row > 1) { // add point to box-above(row-1) => IF row > 1
+                    let box = this.$refs[col+'-'+(row-1)][0];
+                    box.setAttribute('state', parseInt(box.getAttribute('state'))+1);
+                    if(parseInt(box.getAttribute('state'))==4) {
+                        box.innerText = this.name.charAt(0);
+                        this.addScore(this.name);
+                        scored = true;
+                    }
+                }
+                if(row < 2*this.rows+1) { // add point to box-below(row+1) => IF row < 2*rows+1
+                    let box = this.$refs[col+'-'+(row+1)][0];
+                    box.setAttribute('state', parseInt(box.getAttribute('state'))+1);
+                    if(parseInt(box.getAttribute('state'))==4) {
+                        box.innerText = this.name.charAt(0);
+                        this.addScore(this.name);
+                        scored = true;
+                    }
+                }
+                this.$refs[col+'-'+row][0].setAttribute('active', true);
+                // Emit mark event
                 this.socket.emit('markX', {
 					'col': col,
 					'row': row,
                     'roomID': this.roomID,
                     'name': this.name,
 				});
+                // Update Turn
+                if(!scored)
+                    this.socket.emit('next', this.roomID);
+                else
+                    this.turn = true;
             }
         },
         markY(col, row) {
             if(this.turn && !this.$refs[col+'-'+row][0].hasAttribute('active')) {
+                this.turn = false;
+                // Mark and add points
+                var scored = false;
+                if(col > 1) { // add point to left-box(col-1) => IF col > 1
+                    let box = this.$refs[(col-1)+'-'+row][0];
+                    box.setAttribute('state', parseInt(box.getAttribute('state'))+1);
+                    if(parseInt(box.getAttribute('state'))==4) {
+                        box.innerText = this.name.charAt(0);
+                        this.addScore(this.name);
+                        scored = true;
+                    }
+                }
+                if(col < 2*this.cols+1) { // add point to right-box(col+1) => IF col < 2*cols+1
+                    let box = this.$refs[(col+1)+'-'+row][0];
+                    box.setAttribute('state', parseInt(box.getAttribute('state'))+1);
+                    if(parseInt(box.getAttribute('state'))==4) {
+                        box.innerText = this.name.charAt(0);
+                        this.addScore(this.name);
+                        scored = true;
+                    }
+                }
+                this.$refs[col+'-'+row][0].setAttribute('active', true);
+                // Emit mark event
                 this.socket.emit('markY', {
                     'col': col,
                     'row': row,
                     'roomID': this.roomID,
                     'name': this.name,
                 });
+                // Update Turn
+                if(!scored)
+                    this.socket.emit('next', this.roomID);
+                else
+                    this.turn = true;
             }
         },
     }
@@ -201,7 +276,7 @@ export default {
     text-align: left;
     position: absolute;
     top: 25px;
-    left: 25px;
+    left: 10px;
 }
 .boxes {
     transform: scaleX(1.5);
