@@ -56,7 +56,7 @@
             </div>
         </div>
 
-        <div class="mb-4 d-flex flex-column justify-content-between align-items-end">
+        <div class="my-3 d-flex flex-column justify-content-between align-items-end">
             <p class="font-weight-bold text-light d-flex flex-column align-items-start">
                 <span class="badge text-success p-2" :class="{'text-success': turn, 'text-danger': !turn}" v-if="!winner" v-text="turn ? 'Your move ..': 'Opponents move ..'"> </span>
                 <span v-if="!turn && winner && winner == '_DRAW_'"> <span class="badge badge-info p-2"> 🤜 Draw 🤛 </span> </span>
@@ -112,7 +112,6 @@ export default {
                 }
                 this.$refs[marked.col+'-'+marked.row][0].setAttribute('active', true);
             }
-            // this.turn = !this.turn;
         });
 
         this.socket.on('markedY', (marked)=>{
@@ -135,7 +134,6 @@ export default {
                 }
                 this.$refs[marked.col+'-'+marked.row][0].setAttribute('active', true);
             }
-            // this.turn = !this.turn;
         });
 
         this.socket.on('turn', (turn) => {
@@ -169,9 +167,9 @@ export default {
                 // Game ended
                 var winner = players[0];
                 for (let i = 1; i < players.length; i++) {
-                    if(this.scores[players[i]] > this.scores[this.winner])                    
+                    if(this.scores[players[i]] > this.scores[winner])                    
                         winner = players[i];
-                    else if(this.scores[players[i]] == this.scores[this.winner])
+                    else if(this.scores[players[i]] == this.scores[winner])
                         winner = "_DRAW_";
                 }
                 this.win(winner);
