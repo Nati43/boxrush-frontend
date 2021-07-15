@@ -91,16 +91,24 @@
 				<b-button variant="outline-info" :to="origin"> Start a new one </b-button>
 			</div>
 		</div>
+
+		<Chat v-if="(player==1 && roomID) || (player==2 && joined)"
+			:socket="socket" 
+			:roomID="roomID" 
+			:name="name" 
+			:room="room" />
 	</div>
 </template>
 
 <script>
 /* eslint-disable */ 
 import Box from './components/box.vue'
+import Chat from './components/chat.vue'
 export default {
 	name: 'App',
 	components: {
-		Box
+		Box,
+		Chat
 	},
 	data: ()=>{
 		return {
