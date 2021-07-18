@@ -25,12 +25,22 @@
                 max-rows="2" 
                 no-resize ></b-textarea>
             <div>
-                <i class="far fa-paper-plane h3 text-info rounded-circle" :class="{'m-1': !clip}" @click="send"></i>
+                <i class="far fa-paper-plane h3 text-info rounded-circle" 
+                    :class="{'m-1': !clip}" 
+                    @click="send">
+                </i>
                 <i class="btn-clip h3 text-info rounded-circle d-flex align-items-center justify-content-center" 
-                    :class="{'fa fa-chevron-down m-1': !clip, 'far fa-comment-alt': clip, 'glow': (clip && typing.length>0)}"
+                    :class="{'fa fa-chevron-down m-1': !clip}"
                     style="width: 40px; height: 40px"
+                    v-if="!clip"
                     @click="toggleClip">
-                    <b-badge variant="danger msg-badge" v-if="clip && msgCount">{{msgCount}}</b-badge>
+                </i>
+                <i class="btn-clip far fa-comment-alt h3 text-info rounded-circle d-flex align-items-center justify-content-center" 
+                    :class="{'glow': (clip && typing.length>0)}" 
+                    style="width: 40px; height: 40px"
+                    v-else 
+                    @click="toggleClip">
+                    <b-badge variant="danger msg-badge" v-if="msgCount">{{msgCount}}</b-badge>
                 </i>
             </div>
         </div>
