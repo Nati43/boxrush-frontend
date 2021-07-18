@@ -17,20 +17,19 @@
             </div>
         </div>
         <div class="d-flex flex-row align-items-center">
-            <b-textarea class="bg-transparent text-white message-box ml-2 p-2" 
-                v-model="message"
-                @focus="startTyping"
-                @blur="stopTyping"
-                size="sm" 
-                max-rows="2" 
-                no-resize ></b-textarea>
+            <b-input class="bg-transparent text-white message-box ml-2 p-2" 
+                v-model="message" 
+                @focus="startTyping" 
+                @blur="stopTyping" 
+                @keypress.enter="send"
+                size="sm" />
             <div>
                 <i class="far fa-paper-plane h3 text-info rounded-circle" 
                     :class="{'m-1': !clip}" 
                     @click="send">
                 </i>
                 <i class="btn-clip h3 text-info rounded-circle d-flex align-items-center justify-content-center" 
-                    :class="{'fa fa-chevron-down m-1': !clip}"
+                    :class="{'fas fa-chevron-down m-1': !clip}"
                     style="width: 40px; height: 40px"
                     v-if="!clip"
                     @click="toggleClip">
@@ -124,7 +123,7 @@ export default {
     font-weight: bold;
 }
 .btn-clip {
-    transition: all .5s ease-in-out;
+    transition: all .25s ease-in-out;
     position: relative;
 }
 .msg-badge {
@@ -141,7 +140,7 @@ export default {
     right: 0em;
     box-shadow: 0 2.5rem 1rem rgba(0,0,0,.5) !important;
     clip-path: circle(100%);
-    transition: all .25s ease-in-out;
+    transition: all .125s ease-in-out;
 }
 .clip {
     clip-path: circle(25px at calc(100% - 15px) calc(100% - 30px));
