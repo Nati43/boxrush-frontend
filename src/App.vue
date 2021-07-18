@@ -93,6 +93,7 @@
 		</div>
 
 		<Chat v-if="(player==1 && roomID) || (player==2 && joined)"
+			:id="id"
 			:socket="socket" 
 			:roomID="roomID" 
 			:name="name" 
