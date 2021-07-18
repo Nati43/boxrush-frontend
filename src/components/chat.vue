@@ -5,7 +5,7 @@
             <div class="messages mt-auto w-100">
                 <div v-for="(data, idx) in messages" :key="idx" class="bubble m-2 p-2 pl-4 ">
                     <div class="d-flex flex-column align-items-start">
-                        <p class="p-0 m-0 sender mb-1">{{data.name}}</p>
+                        <p class="p-0 m-0 sender mb-1" :class="{'align-self-end': data.id==id}">{{data.name}}</p>
                         <p class="p-0 m-0">{{data.message}}</p>
                     </div>
                 </div>
@@ -64,7 +64,6 @@ export default {
                 this.msgCount++;
         });
         this.socket.on('start_typing', (data)=>{
-            console.log(data);
             if(data.id != this.id)
                 this.typing.push({id: data.id, name: data.name});
         });
@@ -83,6 +82,7 @@ export default {
             if(this.message) {
                 this.socket.emit('send', {
                     'roomID': this.roomID,
+                    'id': this.id,
                     'name': this.name,
                     'message': this.message,
                 });
@@ -92,14 +92,14 @@ export default {
         startTyping(){
             this.socket.emit('start_typing', {
                 'roomID': this.roomID,
-                "id": this.id,
+                'id': this.id,
                 'name': this.name,
             });
         },
         stopTyping(){
             this.socket.emit('stop_typing', {
                 'roomID': this.roomID,
-                "id": this.id,
+                'id': this.id,
                 'name': this.name,
             });
         },
@@ -134,6 +134,7 @@ export default {
 }
 .clip {
     clip-path: circle(25px at calc(100% - 15px) calc(100% - 30px));
+    box-shadow: unset !important;
     transform: translateX(-2em) translateY(-2em);
 }
 .message-box {

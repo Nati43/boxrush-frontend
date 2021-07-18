@@ -58,7 +58,7 @@
 				<p class="font-weight-bold text-light">Waiting for other player<span v-if="numberOfPlayers>2">s</span></p>
 				<b-spinner label="Waiting..." variant="info" type="grow"></b-spinner>
 				<p class="pt-3 font-weight-bold text-light">Invite a friend to join using the link below.</p>
-				<p class="link text-info">https://boxrush.herokuapp.com/?game={{roomID}}</p>
+				<p class="link text-info">{{host}}?game={{roomID}}</p>
 			</div>
 		</div>
 
@@ -88,7 +88,7 @@
 			</div>
 			<div v-else-if="expired">
 				<p class="font-weight-bold text-danger">{{expired}}</p>
-				<b-button variant="outline-info" :to="origin"> Start a new one </b-button>
+				<b-button variant="outline-info" :to="host"> Start a new one </b-button>
 			</div>
 		</div>
 
@@ -113,7 +113,7 @@ export default {
 	},
 	data: ()=>{
 		return {
-			host: '',
+			host: location.origin,
 			name: null,
 			numberOfPlayers: 2,
 			nameError: null,
@@ -121,7 +121,6 @@ export default {
 			rows: 5,
 			socket: null,
 			roomID: null,
-			origin: location.origin,
 			expired: null,
 			player: 1,
 			room: null,
