@@ -2,10 +2,10 @@
     <div class="chat-box" :class="{'clip': clip}">
         <div class="overlay w-100 h-50"></div>
         <div class="messages-container text-white my-3 d-flex align-items-bottom justify-content-stretch">
-            <div class="messages mt-auto w-100">
-                <div v-for="(data, idx) in messages" :key="idx" class="bubble m-2 p-2 pl-4 ">
+            <div class="messages mt-auto w-100 d-flex flex-column align-items-start">
+                <div v-for="(data, idx) in messages" :key="idx" class="bubble m-2 p-2 pl-4" :class="{'align-self-end': data.id==id}">
                     <div class="d-flex flex-column align-items-start">
-                        <p class="p-0 m-0 sender mb-1" :class="{'align-self-end': data.id==id}">{{data.name}}</p>
+                        <p class="p-0 m-0 sender mb-1" v-if="data.id!=id">{{data.name}}</p>
                         <p class="p-0 m-0">{{data.message}}</p>
                     </div>
                 </div>
