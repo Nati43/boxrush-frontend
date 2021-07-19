@@ -17,19 +17,19 @@
             </div>
         </div>
         <div class="d-flex flex-row align-items-center">
-            <b-input class="bg-transparent text-white message-box ml-2 p-2" 
+            <b-input class="bg-transparent text-white message-box border-0 rounded-0 mx-2 p-2" 
+                placeholder="Message"
                 v-model="message" 
                 @focus="startTyping" 
                 @blur="stopTyping" 
-                @keypress.enter="send"
-                size="sm" />
-            <div>
-                <i class="far fa-paper-plane h3 text-info rounded-circle" 
-                    :class="{'m-1': !clip}" 
+                @keypress.enter="send" />
+            <div class="d-flex align-items-center">
+                <i class="fab fa-rocketchat h3 text-info rounded-circle mt-1 d-flex align-items-center justify-content-center" 
+                    style="width: 40px; height: 40px"
+                    v-if="!clip"
                     @click="send">
                 </i>
-                <i class="btn-clip h3 text-info rounded-circle d-flex align-items-center justify-content-center" 
-                    :class="{'fas fa-chevron-down m-1': !clip}"
+                <i class="fa fa-times-circle h3 text-info rounded-circle mt-1 d-flex align-items-center justify-content-center" 
                     style="width: 40px; height: 40px"
                     v-if="!clip"
                     @click="toggleClip">
@@ -148,7 +148,7 @@ export default {
     transform: translateX(-2em) translateY(-2em);
 }
 .message-box {
-    border-bottom: 1px solid #17a2b8 !important;
+    border-bottom: 2px solid #17a2b8 !important;
 }
 .messages-container {
     position: relative;
