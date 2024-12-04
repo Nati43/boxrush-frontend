@@ -59,6 +59,8 @@
 				<b-spinner label="Waiting..." variant="info" type="grow"></b-spinner>
 				<p class="pt-3 font-weight-bold text-light">Invite a friend to join using the link below.</p>
 				<p class="link text-info">{{host}}?game={{roomID}}</p>
+				<!-- copy button here -->
+				<b-button variant="outline-info px-3" @click="copy"> {{copyCommand}} </b-button>
 			</div>
 		</div>
 
@@ -127,6 +129,7 @@ export default {
 			started: false,
 			joined: false,
 			id: null,
+			copyCommand: "Copy"
 		}
 	},
 	mounted() {
@@ -181,8 +184,8 @@ export default {
 		join(){
 			if(this.name) {
 				this.nameError=false;
-				this.socket = io(this.host+'/games');
-	
+				this.socket = io.connect(this.host+'/games');
+
 				this.socket.on('connect', ()=>{
 					console.log('Connected to server.');
 					this.socket.emit("join", {
@@ -211,6 +214,17 @@ export default {
 				this.nameError = true;
 			}
 		},
+		async copy() {
+			var link = this.host+"?game="+this.roomID;
+			try {
+				await navigator.clipboard.writeText(link);
+				this.copyCommand = "Copied";
+				setTimeout(() => (this.copyCommand = "Copy"), 3000); // Reset success message
+			} catch (err) {
+				console.error('Failed to copy text: ', err);
+				this.copyCommand = "Copy";
+			} 
+		}
 	}
 }
 </script>
